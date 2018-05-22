@@ -1,7 +1,5 @@
-[angular.js]: ./assets/logos/angularjs-small.svg
 [angular]: ./assets/logos/angular-small.svg
 [react]: ./assets/logos/react-small.svg
-[vue]: ./assets/logos/vue-small.svg
 
 <h1 align="center">Frontend Frameworks Code Comparison</h1>
 
@@ -9,23 +7,13 @@
 
 ![./assets/logos/angular.svg](./assets/logos/angular.svg)
 ![./assets/logos/react.svg](./assets/logos/react.svg)
-![./assets/logos/vue.svg](./assets/logos/vue.svg)
 
 </div>
 
-[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Code%20comparison%20of%20modern%20web%20frameworks%2C%20based%20on%20React%2C%20Angular%20and%20Vue.js&url=https://github.com/feimosi/frameworks-code-comparison)
-
-Comparison of different approaches in writing web applications. Based on React, Angular, AngularJS and Vue.js. It is especially useful when migrating between frameworks or switching projects often.
+Comparison of different approaches in writing web applications. It is especially useful when migrating between frameworks or switching projects often.
 
 All examples follow the current best practices and conventions that are used inside the community of a given framework. Angular code is written in TypeScript.
 
-<h3 align="center"> :warning: Work in progress! PRs and Feedback are welcome :warning: </h3>
-
-> Note regarding framework naming:
-> - AngularJS refers to Angular v1.x
-> - Angular refers to Angular v2+
->
-> See: http://angularjs.blogspot.com/2017/01/branding-guidelines-for-angular-and.html
 
 <h1 align="center">Table of contents</h1>
 
@@ -51,55 +39,6 @@ All examples follow the current best practices and conventions that are used ins
 
 # Simple component
 
-## ![angular.js] AngularJS
-
-Since AngularJS 1.5 we have a new syntax (backported from Angular 2) to built [component-based applications](https://docs.angularjs.org/guide/component#component-based-application-architecture) using `component` type.
-
-```js
-export class ChangePasswordController {
-  constructor($log, Auth, Notification) {
-    'ngInject';
-
-    this.$log = $log;
-    this.Auth = Auth;
-    this.Notification = Notification;
-  }
-
-  $onInit() {
-    this.password = '';
-  }
-
-  changePassword() {
-    this.Auth.changePassword(this.password).then(() => {
-      this.Notification.info('Password has been changed successfully.');
-    }).catch(error => {
-      this.$log.error(error);
-      this.Notification.error('There was an error. Please try again.');
-    });
-  }
-}
-```
-
-Every component has to be declared inside a module. After that, it will be available to every other component.
-
-```js
-import angular from 'angular';
-import template from './changePassword.html';
-import ChangePasswordController from './changePassword.controller.scss';
-import './changePassword.scss';
-
-const component = {
-  bindings: {},
-  template,
-  controller: ChangePasswordController,
-};
-
-export const module = angular
-  .module('app.changePassword', [])
-  .component('changePassword', component);
-```
-
-:link: https://docs.angularjs.org/guide/component
 
 ## ![angular] Angular
 
@@ -180,35 +119,6 @@ export class ChangePassword {
 
 :link: https://reactjs.org/docs/react-component.html
 
-## ![vue] Vue.js
-
-```js
-import Vue from 'vue';
-import Logger from 'utils/logger';
-import Auth from 'actions/auth';
-import Notification from 'utils/notification';
-
-Vue.component('change-password', {
-  template: '<div>{{ /* template */ }}</div>',
-  data() {
-    return {
-      password: '',
-    };
-  },
-  methods: {
-    changePassword() {
-      Auth.changePassword(this.state.password).then(() => {
-        Notification.info('Password has been changed successfully.');
-      }).catch(error => {
-        Logger.error(error);
-        Notification.error('There was an error. Please try again.');
-      });
-    },
-  },
-});
-```
-
-:link: https://vuejs.org/v2/guide/components.html
 
 # Dependency injection
 
