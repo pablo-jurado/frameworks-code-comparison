@@ -122,31 +122,6 @@ export class ChangePassword {
 
 # Dependency injection
 
-## ![angular.js] AngularJS
-
-In AngularJS the constructor is being used to inject dependencies, which is done implicitly by the [$inject](https://docs.angularjs.org/api/auto/service/$injector) service.
-
-The `'ngInject'` annotation can be used, which allows automatic method annotation by the ng-annotate plugin (e.g. [ng-annotate-loader](https://www.npmjs.com/package/ng-annotate-loader) for Webpack). This is essential to counter [minification problems](https://docs.angularjs.org/guide/di#dependency-annotation).
-
-```js
-export class ChangePasswordController {
-  constructor($log, Auth, Notification) {
-    'ngInject';
-
-    this.$log = $log;
-    this.Auth = Auth;
-    this.Notification = Notification;
-  }
-
-  handleEvent() {
-    this.Notification.info('Password changed successfully');
-    this.$log.info('Password changed successfully');
-  }
-}
-```
-
-:link: https://docs.angularjs.org/guide/di
-
 ## ![angular] Angular
 
 You specify the definition of the dependencies in the constructor (leveraging TypeScript's constructor syntax for declaring parameters and properties simultaneously).
@@ -198,73 +173,8 @@ export class ChangePassword extends Component {
 }
 ```
 
-## ![vue] Vue.js
-
-Vue.js uses ES2015 modules for dependency management:
-
-```js
-import Vue from 'vue';
-import Logger from 'utils/logger';
-import Notification from 'utils/notification';
-
-Vue.component('change-password', {
-  template: '<div>{{ /* template */ }}</div>',
-  methods: {
-    handleEvent() {
-      Notification.info('Password changed successfully');
-      Logger.info('Password changed successfully');
-    },
-  },
-});
-```
-
-There's also [provide and inject](https://vuejs.org/v2/api/#provide-inject) mechanism which is primarily provided for advanced plugin / component library use cases:
-
-Parent component:
-```js
-import Notification from 'utils/notification';
-import Vue from 'vue';
-
-new Vue({
-  el: '#app',
-  provide: {
-    notification: Notification,
-  },
-});
-```
-
-Child component:
-```js
-import Vue from 'vue';
-
-Vue.component('change-password', {
-  inject: ['notification'],
-  template: '<div>{{ /* template */ }}</div>',
-  methods: {
-    handleEvent() {
-      this.notification.info('Event handled successfully');
-    },
-  },
-});
-```
 
 # Templates
-
-## ![angular.js] AngularJS
-
-Templates in AngularJS are compiled by the [$compile](https://docs.angularjs.org/api/ng/service/$compile) service.
-Values of component properties must be one of the following:
-- string binding (defined as `@`)
-- expression binding (defined as `<`)
-- reference binding (defined as `&`)
-
-```html
-<primary-button size="big"
-                disabled="true"
-                click="$ctrl.saveContent()">
-  Save
-</primary-button>
-```
 
 ## ![angular] Angular
 
@@ -295,50 +205,7 @@ Templates in React are written inside the JavaScript file using the [JSX languag
 </PrimaryButton>;
 ```
 
-## ![vue] Vue.js
-
-Component properties can be passed in as:
-- literal (as strings) e.g. `size="big"`
-- dynamic (using [v-bind](https://vuejs.org/v2/api/#v-bind) or [`:shorthand`](https://vuejs.org/v2/guide/syntax.html#v-bind-Shorthand) with actual values) e.g. `v-bind:disabled="true"`
-
-Events can be listened to using [`v-on`](https://vuejs.org/v2/guide/events.html#Method-Event-Handlers) or [`@shorthand`](https://vuejs.org/v2/guide/syntax.html#v-on-Shorthand) combined with the event name, and a method name as the value, e.g `v-on:click="saveContent"`.
-
-```html
-<primary-button
-  size="big"
-  v-bind:disabled="true"
-  v-on:click="saveContent"
->
-    Save
-</primary-button>
-```
-
-:link: https://vuejs.org/v2/guide/syntax.html
-
 # Interpolation
-
-## ![angular.js] AngularJS
-
-In AngularJS interpolation is the process of data-binding values of the `scope` to the HTML. You can also interpolate more complicated values e.g. expressions or function invocations.
-
-
-```html
-<img ng-src="{{ $ctrl.image.url }}" alt="{{ $ctrl.image.alt }}" />
-```
-
-We use [`ng-src`](https://docs.angularjs.org/api/ng/directive/ngSrc) instead of the regular `src` attribute so that AngularJS can set it up before the browser will try to load the image.
-
-Another way to "bind" data is to use [`ng-bind`](https://docs.angularjs.org/api/ng/directive/ngBind). This allows us to counter the issue with a raw state being displayed before AngularJS compiles the template.
-
-```html
-<label>
-    Enter name:
-    <input type="text" ng-model="$ctrl.name">
-</label>
-<span ng-bind="$ctrl.name"></span>
-```
-
-:link: https://docs.angularjs.org/guide/interpolation
 
 ## ![angular] Angular
 
@@ -362,65 +229,9 @@ React uses single curly braces for interpolation. Any JavaScript can be interpol
 
 :link: https://reactjs.org/docs/introducing-jsx.html#embedding-expressions-in-jsx
 
-## ![vue] Vue.js
-
-```html
-<img :src="image.url" alt="{{ image.alt }}" />
-```
-
-You can also perform one-time interpolations that do not update on data change by using the [v-once](https://vuejs.org/v2/api/#v-once) directive,
-
-```html
-<span v-once>Hello {{ username }}!</span>
-```
-
-:link: https://vuejs.org/v2/guide/syntax.html#Interpolations
 
 # Handling DOM Events
 
-## ![angular.js] AngularJS
-
-Handlers of native events are bound using provided [built-in directives](https://docs.angularjs.org/api/ng/directive) e.g.
-[`ng-click`](https://docs.angularjs.org/api/ng/directive/ngClick), [`ng-focus`](https://docs.angularjs.org/api/ng/directive/ngFocus), [`ng-keypress`](https://docs.angularjs.org/api/ng/directive/ngKeypress).
-
-```js
-class MenuTopbarController {
-  $onInit() {
-    this.selected = null;
-  }
-
-  handleClick(item) {
-    if (this.selected !== item) {
-      this.selected = item;
-      if (typeof item.callback === 'function') {
-        item.callback();
-      }
-    }
-  }
-}
-
-const menuTopbar = {
-  bindings: {
-    items: '<',
-  },
-  template: require('./menuTopbar.html'),
-  controller: MenuTopbarController,
-};
-
-angular.module('app')
-  .component('menuTopbar', menuTopbar);
-```
-
-```html
-<ul>
-  <li ng-repeat="item in $ctrl.items"
-      ng-click="$ctrl.handleClick(item)">
-    {{ item.label }}
-  </li>
-</ul>
-```
-
-:link: https://docs.angularjs.org/tutorial/step_12
 
 ## ![angular] Angular
 
@@ -532,118 +343,9 @@ export class MenuTopbar extends Component {
 
 :link: https://reactjs.org/docs/handling-events.html
 
-## ![vue] Vue.js
-
-We can use the v-on directive (or `@` shorthand) to listen to DOM events and run some JavaScript when they’re triggered.
-
-Vue also provides event modifiers (directive postfixes denoted by a dot).
-
-- `.stop` - stopPropagation
-- `.prevent` - preventDefault
-- `.capture` - use capture mode
-- `.self` - only trigger handler if event.target is the element itself
-- `.once` - the event will be triggered at most once
-
-```js
-Vue.component('menu-topbar', {
-  data: {
-    selected: null,
-  },
-  methods: {
-    handleClick: (item) => {
-      if (this.selected !== item) {
-        this.selected = item;
-        if (item.callback) {
-          item.callback();
-        }
-      }
-    },
-  },
-});
-```
-
-```html
-<ul>
-  <li 
-    v-for="item in items" 
-    :key="item.label"
-    @click="handleClick(item)"
-  >
-    {{ item.label }}
-  </li>
-</ul>
-```
-
-:link: https://vuejs.org/v2/guide/events.html
 
 # Inputs and Outputs
 
-## ![angular.js] AngularJS
-
-Inputs are defined by either `@` (string binding) or `<` (one-way binding) while outputs are defined by the `&` symbol. Passing arguments requires you to use an object in a child component which is then mapped to function parameters defined in the template.
-
-```js
-class UserPreviewComponent {
-  $onInit() {
-    this.editedUser = {
-      name: this.user.name,
-      email: this.user.email,
-    };
-  }
-
-  submitEdit() {
-    this.onEdit({ user: this.editedUser });
-  }
-}
-
-const component = {
-  bindings: {
-    user: '<',
-    onEdit: '&',
-  },
-  template: require('./userPreview.html'),
-  controller: UserPreviewComponent,
-};
-
-export default angular.module.component('userPreview', component);
-```
-
-```html
-<form ng-submit="$ctrl.submitEdit()">
-  <input type="text" ng-model="$ctrl.editedUser.name">
-  <input type="email" ng-model="$ctrl.editedUser.email">
-  <input type="submit" value="Submit" />
-</form>
-```
-
-In a parent component:
-
-```js
-class SettingsComponent {
-  user = {
-    name: 'John Smith',
-    email: 'john.smith@example.com',
-  };
-
-  editUser(user) {
-    this.user = Object.assign({}, this.user, user);
-    console.log('Name of the edited user is', user.name);
-  }
-}
-
-const component = {
-  template: require('./settings.html'),
-  controller: SettingsComponent,
-};
-
-export default angular.module.component('settings', component);
-```
-
-```html
-<user-preview user="user"
-              on-edit="editUser(user)">
-</user-preview>
-```
 
 ## ![angular] Angular
 
@@ -788,61 +490,8 @@ export class SettingsComponent extends Component {
 }
 ```
 
-## ![vue] Vue.js
-
-Child component:
-
-```js
-Vue.component('child', {
-  props: {
-    class: {
-      type: String,
-      required: true,
-    },
-    loading: Boolean,
-    message: String,
-  },
-  template: '<span v-bind:class="class" v-show="loading" v-text="message"></span>',
-});
-```
-
-Usage in the parent component:
-
-```html
-<child class="small" :loading="true" message="Busy Loading!"></child>
-```
-
-:link: https://vuejs.org/v2/guide/components.html#Props
-
 # Default inputs
 
-## ![angular.js] AngularJS
-
-There's no built-in mechanism for default inputs, so we assign them programmatically in the `$onChanges` hook.
-
-```js
-class CoursesListController {
-  $onChanges(bindings) {
-    if (typeof bindings.displayPurchased.currentValue === 'undefined') {
-      this.displayPurchased = true;
-    }
-    if (typeof bindings.displayAvailable.currentValue === 'undefined') {
-      this.displayAvailable = true;
-    }
-  }
-}
-
-const component = {
-  bindings: {
-    displayPurchased: '<',
-    displayAvailable: '<',
-  },
-  templateUrl: './coursesList.component.html',
-  controller: CoursesListController,
-};
-
-export default component;
-```
 
 ## ![angular] Angular
 
@@ -884,51 +533,9 @@ export class CoursesListController extends { Component } {
 
 :link: https://reactjs.org/docs/typechecking-with-proptypes.html#default-prop-values
 
-## ![vue] Vue.js
-
-```js
-import Vue from 'vue';
-
-Vue.component('courses-list', {
-  template: '<div>{{ /* template */ }}</div>',
-  props: {
-    displayPurchased: {
-      type: Boolean,
-      default: true,
-    },
-    displayAvailable: {
-      type: Boolean,
-      default: true,
-    },
-  },
-});
-```
 
 # Lifecycle methods
 
-## ![angular.js] AngularJS
-
-#### `$onInit()` 
-
-Called when the component has been constructed and has its bindings have been initialized.
-
-#### `$postLink()` 
-
-Called after the component and its children have been linked (mounted).
-
-#### `$onChanges(changes)`
-
-Called whenever one-way bindings are updated.
-
-#### `$doCheck()`
-
-Called on each turn of the digest cycle.
-
-#### `$onDestroy()`
-
-Called when the component (a controller with its containing scope) is being destroyed.
-
-:link: https://docs.angularjs.org/api/ng/service/$compile
 
 ### ![angular] Angular
 
@@ -1108,148 +715,9 @@ Is invoked immediately before a component is unmounted and destroyed. Useful for
 
 Is invoked when Javascript throws an error anywhere in the component's tree. Useful for catching errors, showing a fallback interface, and logging errors without breaking the entire application.
 
-## ![vue] Vue.js
-
-#### [`beforeCreate`](https://vuejs.org/v2/api/#beforeCreate)
-
-Called synchronously immediately after the instance has been initialized, but before data observation and event/watcher setup. On every Vue instance lifecycle, `this` points to the vm instance itself.
-
-```javascript
-new Vue({
-  beforeCreate: function () {
-    console.log('this method called before instance created')
-  }
-})
-```
-
-#### [`created`](https://vuejs.org/v2/api/#created)
-
-Called synchronously after the instance is created. At this stage, the instance has finished processing the options, which means the following have been set up: data observation, computed properties, methods, watch/event callbacks. However, the mounting phase has not been started, and the `$el` property will not be available yet.
-
-```javascript
-new Vue({
-  created: function () {
-    console.log('this method called after instance created')
-  }
-})
-```
-
-#### [`beforeMount`](https://vuejs.org/v2/api/#beforeMount)
-
-Called right before the mounting begins: the render function is about to be called for the first time.
-
-_This hook is not called during server-side rendering._
-
-```javascript
-new Vue({
-  beforeMount: function () {
-    console.log('this method called before mounting an instance')
-  }
-})
-```
-
-#### [`mounted`](https://vuejs.org/v2/api/#mounted)
-
-Called after the instance has been mounted, where [el](https://vuejs.org/v2/api/#el) is replaced by the newly created `vm.$el`. If the root instance is mounted to an in-document element, `vm.$el` will also be in-document when `mounted` is called.
-
-Note that `mounted` does not guarantee that all child components have also been mounted. If you want to wait until the entire view has been rendered, you can use [vm.$nextTick](https://vuejs.org/v2/api/#Vue-nextTick) inside of mounted:
-
-```javascript
-new Vue({
-  mounted: function () {
-    this.$nextTick(function () {
-      // Code that will run only after the
-      // entire view has been rendered
-    })
-  }
-})
-```
-
-#### [`beforeUpdate`](https://vuejs.org/v2/api/#beforeUpdate)
-
-Called whenever the data changes, before the virtual DOM is re-rendered and patched.
-
-You can perform further state changes in this hook and they will not trigger additional re-renders.
-
-_This hook is not called during server-side rendering._
-
-#### [`updated`](https://vuejs.org/v2/api/#updated)
-
-Called after a data change causes the virtual DOM to be re-rendered and patched.
-
-The component’s DOM will have been updated when this hook is called, so you can perform DOM-dependent operations here. However, in most cases you should avoid changing state inside the hook.
-
-Note that `updated` does not guarantee that all child components have also been re-rendered. If you want to wait until the entire view has been re-rendered, you can use [vm.$nextTick](https://vuejs.org/v2/api/#Vue-nextTick) inside of `updated`:
-
-```javascript
-updated: function () {
-  this.$nextTick(function () {
-    // Code that will run only after the
-    // entire view has been re-rendered
-  })
-}
-```
-
-#### [`activated`](https://vuejs.org/v2/api/#activated)
-
-Called when a kept-alive component is activated.
-
-_This hook is not called during server-side rendering._
-
-#### [`deactivated`](https://vuejs.org/v2/api/#deactivated)
-
-Called when a kept-alive component is deactivated.
-
-_This hook is not called during server-side rendering._
-
-#### [`beforeDestroy`](https://vuejs.org/v2/api/#beforeDestroy)
-
-Called right before a Vue instance is destroyed. At this stage the instance is still fully functional.
-
-_This hook is not called during server-side rendering._
-
-#### [`destroyed`](https://vuejs.org/v2/api/#destroyed)
-
-Called after a Vue instance has been destroyed. When this hook is called, all directives of the Vue instance have been unbound, all event listeners have been removed, and all child Vue instances have also been destroyed.
-
-_This hook is not called during server-side rendering._
-
-
-#### [`errorCaptured`](https://vuejs.org/v2/api/#errorCaptured)
-
-Called when an error from any descendent component is captured.
 
 # Conditional rendering
 
-## ![angular.js] AngularJS
-
-Angularjs 1.x has three ways to perform conditional rendering: `ng-if`, `ng-switch` and `ng-hide/ng-show`.
-
-```js
-export class RegistrationController {
-  registrationCompleted = false;
-  displaySpecialOffer = false;
-  displayStatus = 'Registered';
-}
-```
-```html
-<div ng-if="displaySpecialOffer">
-  <special-offer></special-offer>
-</div>
-
-<div ng-switch="displayStatus">
-  <div ng-switch-when="Registered">
-     <registration-completed></registration-completed>
-  </div>
-</div>
-
-<div ng-show="displaySpecialOffer">
-  <special-offer></special-offer>
-</div>
-<div ng-hide="displaySpecialOffer">
-  <special-offer></special-offer>
-</div>
-```
 
 ## ![angular] Angular
 
@@ -1318,64 +786,9 @@ export class Registration extends Component {
 }
 ```
 
-## ![vue] Vue.js
-
-Vue.js has three directives to perform conditional rendering: `v-if`, `v-else-if` and `v-else`.
-
-```html
-<template>
-  <section v-if="registrationCompleted && !displaySpecialOffer">
-    <registration-completed />
-  </section>
-  <section v-else-if="registrationCompleted && displaySpecialOffer">
-    <special-offer />
-    <registration-completed />
-  </section>
-  <section v-else>
-    <registration-form />
-  </section>
-</template>
-```
-
-:link: https://vuejs.org/v2/guide/conditional.html
 
 # Lists
 
-## ![angular.js] AngularJS
-
-[ngRepeat](https://docs.angularjs.org/api/ng/directive/ngRepeat)
-
-```js
-export class BookListComponentCtrl {
-  constructor() {
-    this.books = [
-      {
-        id: 1,
-        title: 'Eloquent JavaScript',
-        author: 'Marijn Haverbeke',
-      },
-      {
-        id: 2,
-        title: 'JavaScript: The Good Parts',
-        author: 'Douglas Crockford',
-      },
-      {
-        id: 3,
-        title: 'JavaScript: The Definitive Guide',
-        author: 'David Flanagan',
-      },
-    ];
-  }
-}
-```
-
-```html
-<ul>
-  <li ng-repeat="book in $ctrl.books track by book.id">
-    {{ book.title }} by {{ book.author }}
-  </li>
-</ul>
-```
 
 ## ![angular] Angular
 
@@ -1474,76 +887,8 @@ export class BookList extends Component {
 }
 ```
 
-## ![vue] Vue.js
-
-```html
-<template>
-  <ul>
-    <li v-for="book in books" :key="book.id">
-      {{ book.title }} by {{ book.author }}
-    </li>
-  </ul>
-</template>
-```
-
-```js
-export default {
-  data() {
-    return {
-      books: [
-        {
-          id: 1,
-          title: 'Eloquent JavaScript',
-          author: 'Marijn Haverbeke',
-        },
-        {
-          id: 2,
-          title: 'JavaScript: The Good Parts',
-          author: 'Douglas Crockford',
-        },
-        {
-          id: 3,
-          title: 'JavaScript: The Definitive Guide',
-          author: 'David Flanagan',
-        },
-      ],
-    };
-  },
-};
-```
-
 # Filters
 
-## ![angular.js] AngularJS
-
-AngularJS provides filters to transform data. There are several [built-in filters](https://docs.angularjs.org/api/ng/filter) available and you can make your own custom filters as well.
-
-Filters can be applied to view templates using the following syntax:
-
-```html
-<h1>{{ price | currency }}</h1>
-```
-
-Chaining of filters is also possible:
-
-```html
-<h1>{{ name | uppercase | appendTitle  }}</h1>
-```
-
-Custom Filters:
-
-```js
-angular.module('app', [])
-  .filter('reverse', function() {
-    return (input = '', uppercase = false) => {
-      const out = input.split('').reverse().join('');
-
-      return uppercase ? out.toUpperCase() : out;
-    };
-  });
-```
-
-:link: https://docs.angularjs.org/guide/filter
 
 ## ![angular] Angular
 
@@ -1613,87 +958,9 @@ Filter chaining can be achieved using function composition:
 </div>;
 ```
 
-## ![vue] Vue.js
-
-Vue.js provides filters to allow for simple text formatting. The filter utilizes the `|` character which is appended to the expression followed by the filter's name. Vue does not come with any pre-built filters.
-
-Filters can be used within mustache interpolations:
-
-```html
-<h1>{{ name | lowercase }}</h1>
-```
-
-Filters can also be used within the `v-bind` directive:
-
-```html
-<div v-bind:slug="slug | formatSlug"></div>
-```
-
-When creating filters, the function always receives the expression's value:
-
-```js
-new Vue({
-  el: '#app',
-  template: '<p> {{ message | lowercase }} </p>',
-  filters: {
-    lowercase(word) {
-      return word.toLowerCase();
-    },
-  },
-  data: {
-    message: 'Hello World',
-  },
-});
-```
-
-Filters can also be chained:
-
-```html
-<p>{{ description | lowercase | truncate }}</p>
-```
-
-Filters can be created locally like the above example and only be available within that component. Filters can also be declared globally:
-
-```js
-Vue.filter('lowercase', word => word.toLowerCase());
-```
-
-For global filters to work, they should be declared before the Vue instance.
-
-:link: https://vuejs.org/v2/guide/filters.html
 
 # Child nodes
 
-## ![angular.js] AngularJS
-
-Inside a [component](https://docs.angularjs.org/guide/component), we have access to the child node by injecting `$element` to the controller. This object contains a [jqLite](https://docs.angularjs.org/api/ng/function/angular.element) wrapped instance of the DOM element. Accessing `$element[0]` will return the bare DOM element.
-
-Transclusion is also supported - using `ng-transclude` (See [Transclusion and Containment](#transclusion-and-containment) section).
-
-```js
-class TextInputController {
-  constructor($element) {
-    'ngInject';
-
-    this.$element = $element;
-  }
-
-  // The $element can be used after the link stage
-  $postLink() {
-    const input = this.$element.find('input');
-    input.on('change', console.log);
-  }
-}
-
-const component = {
-  controller: TextInputController,
-  template: `
-    <div>
-      <input type="text" />
-    </div>
-  `,
-};
-```
 
 ## ![angular] Angular
 
@@ -1841,41 +1108,9 @@ const App = () => (
 );
 ```
 
-## ![vue] Vue.js
-
-> TODO
-
 # Transclusion and Containment
 
 ## Basic
-
-## ![angular.js] AngularJS
-
-```js
-angular.module('app.layout', [])
-  .component('layout', {
-    bindings: {
-      theme: '@',
-    },
-    controller: LayoutController,
-    transclude: true,
-    template: `
-    <div ng-class="'theme-' + $ctrl.theme">
-      <ng-transclude></ng-transclude>
-    </div>
-  `,
-  }).component('pageContent', {
-    template: '<div>Some content</div>',
-  }).component('pageFooter', {
-    template: '<footer>Some content</footer>',
-  });
-```
-```html
-<layout theme="dark">
-  <page-content></page-content>
-  <page-footer></page-footer>
-</layout>
-```
 
 ## ![angular] Angular
 
@@ -1932,43 +1167,8 @@ const PageFooter = () => (
 </Layout>;
 ```
 
-## ![vue] Vue.js
-
-> TODO
-
 ## Multiple slots
 
-## ![angular.js] AngularJS
-
-```js
-angular.module('app.layout', [])
-  .component('landingSection', {
-    bindings: {},
-    controller: LandingSectionController,
-    transclude: {
-      contentSlot: '?content', // '?' indicates an optional slot
-      iconSlot: '?icon',
-    },
-    template: `
-    <div>
-      <span ng-transclude="contentSlot"></span>
-      <div>
-        <span ng-transclude="iconSlot">This is the default value</span>
-      </dev>
-    </div>
-  `,
-  }).component('pageContent', {
-    template: '<div>Some content</div>',
-  });
-```
-```html
-<div>
-  <h1>Page title</h1>
-  <landing-section>
-    <page-content></page-content>
-  </landing-section>
-</div>
-```
 
 ## ![angular] Angular
 
@@ -2006,60 +1206,9 @@ const Content = () => (
 </Layout>;
 ```
 
-## ![vue] Vue.js
-
-App layout:
-```html
-<div class="container">
-  <header>
-    <slot name="header"></slot>
-  </header>
-  <main>
-    <slot></slot>
-  </main>
-  <footer>
-    <slot name="footer"></slot>
-  </footer>
-</div>
-```
-Parent markup:
-```html
-<app-layout>
-  <h1 slot="header">Here might be a page title</h1>
-  <p>A paragraph for the main content.</p>
-  <p>And another one.</p>
-  <p slot="footer">Here's some contact info</p>
-</app-layout>
-```
-Result:
-```html
-<div class="container">
-  <header>
-    <h1>Here might be a page title</h1>
-  </header>
-  <main>
-    <p>A paragraph for the main content.</p>
-    <p>And another one.</p>
-  </main>
-  <footer>
-    <p>Here's some contact info</p>
-  </footer>
-</div>
-```
-:link: https://vuejs.org/v2/guide/components.html#Named-Slots
 
 # Class toggling
 
-## ![angular.js] AngularJS
-
-The [ng-class](https://docs.angularjs.org/api/ng/directive/ngClass) directive allows you to dynamically set CSS classes on an HTML element.
-
-```html
-<main-header
-  ng-class="{ 'mainNavbar--fluid': $ctrl.isFluid }">
-...
-</main-header>
-```
 
 ## ![angular] Angular
 
@@ -2101,47 +1250,8 @@ class App {
 }
 ```
 
-## ![vue] Vue.js
-
-```html
-<main-header
-  v-bind:class="{ 'mainNavbar--fluid': isFluid }"
->
-```
-
-:link: https://vuejs.org/v2/guide/class-and-style.html
-
 # Data binding
 
-## ![angular.js] AngularJS
-
-The [ng-model](https://docs.angularjs.org/api/ng/directive/ngModel) directive binds a form control to a property in the controller. This provides two-way binding.
-
-```js
-import angular from 'angular';
-import template from './registration.html';
-
-class RegistrationController {
-  $onInit() {
-    this.name = '';
-  }
-}
-
-const component = {
-  bindings: {},
-  template,
-  controller: RegistrationController,
-};
-
-export const module = angular
-  .module('app.registration', [])
-  .component('registration', component);
-```
-
-```html
-<input ng-model="$ctrl.name" />
-<p>Name: {{ $ctrl.name }}</p>
-```
 
 ## ![angular] Angular
 
@@ -2170,50 +1280,9 @@ export class RegistrationComponent {
 
 > TODO
 
-## ![vue] Vue.js
-
-You can use the `v-model` directive to create **two-way data bindings** on form `input` and `textarea` elements. It automatically picks the correct way to update the element based on the input type. Although a bit magical, `v-model` is essentially syntax sugar for updating data on user input events, plus special care for some edge cases.
-
-:link: https://vuejs.org/v2/guide/forms.html
 
 # Forms
 
-## ![angular.js] AngularJS
-
-```js
-class SignInController {
-  constructor(Auth) {
-    'ngInject';
-
-    this.Auth = Auth;
-  }
-
-  $onInit() {
-    this.email = '';
-    this.password = '';
-  }
-
-  submit() {
-    Auth.signIn(this.email, this.password);
-  }
-}
-
-```
-
-```html
-<form name="$ctrl.form">
-  <label>
-    Email:
-    <input type="text" ng-model="$ctrl.email" />
-  </label>
-
-  <label>
-    E-mail:
-    <input type="email" ng-model="$ctrl.password" />
-  </label>
-  <input type="submit" ng-click="$ctrl.submit()" value="Save" />
-</form>
-```
 
 ## ![angular] Angular
 
@@ -2224,7 +1293,7 @@ Angular offers two ways to build forms:
 
 The former uses a reactive (or model-driven) approach to build forms. The latter allows you to build forms by writing templates in the Angular template syntax with the form-specific directives and techniques.
 
-### ![react] Reactive forms example
+### Reactive forms example
 
 ```ts
 import { Component, OnInit } from '@angular/core';
@@ -2349,73 +1418,8 @@ export default class ReactForm extends Component {
 
 :link: https://reactjs.org/docs/forms.html
 
-## ![vue] Vue.js
-
-```html
-<template>
-  <form v-on:submit.prevent="onSubmit">
-   <label>
-       Email:
-      <input type="email" v-model="email">
-   </label>
-   <label>
-     Password:
-     <input type="password" v-model="password" />
-   </label>
-   <button type="submit">Send</button>
-  </form>
-</template>
-
-<script>
-import Auth form './util/auth.js';
-
-export default {
-  data() {
-    return {
-      email: '',
-      password: ''
-    }
-  },
-  methods: {
-    onSubmit() {
-      Auth.signIn(this.email, this.password);
-    }
-  }
-}
-</script>
-```
-
-:link: https://vuejs.org/v2/guide/forms.html
 
 # Styling
-
-## ![angular.js] AngularJS
-
-Generally you will use a preprocessor (e.g. [Sass](http://sass-lang.com/)) and assign appropriate classes to the elements.
-
-The [`ng-style`](https://docs.angularjs.org/api/ng/directive/ngStyle) directive allows you to set custom CSS styles dynamically.
-
-```js
-class HeaderController {
-  constructor(ThemeProvider) {
-    'ngInject';
-
-    this.ThemeProvider = ThemeProvider;
-    this.headerStyles = {};
-  }
-
-  $onInit() {
-    this.headerStyles.color = ThemeProvider.getTextPrimaryColor();
-  }
-}
-```
-
-```html
-<h1 ng-style="$ctrl.headerStyles"
-    class="Header">
-    Welcome
-</h1>
-```
 
 ## ![angular] Angular
 
@@ -2487,55 +1491,11 @@ export class HeaderComponent {
 }
 ```
 
-## ![vue] Vue.js
 
-When using [Single File Components](https://vuejs.org/v2/guide/single-file-components.html) you can simply style a component inside the `<style>` tag. When the tag has the `scoped` attribute, its CSS will apply to elements of the current component only.
-
-To bind styles dynamically you can use the [`v-bind:style`](https://vuejs.org/v2/guide/class-and-style.html#Binding-Inline-Styles) directive.
-
-```html
-<template>
-  <h1 class="Header"
-    v-bind:style="headerStyles">
-     Welcome
-  </h1>
-</template>
-
-<script>
-const ThemeProvider = require('./utils/themeProvider');
-
-module.exports = {
-  data() {
-    return {
-      headerStyles: {
-        color: null,
-      }
-    };
-  },
-  created() {
-    this.headerStyles.color = ThemeProvider.getTextPrimaryColor();
-  },
-};
-</script>
-
-<style scoped>
-  .Header {
-    font-weight: normal
-  }
-</style>
-```
 
 # Inject HTML template
 
 Also known as innerHTML.
-
-## ![angular.js] AngularJS
-
-By default, the HTML content will be sanitized using the [$sanitize](https://docs.angularjs.org/api/ngSanitize/service/$sanitize) service. To utilize this functionality, you need to include `ngSanitize` in your module's dependencies. [Read more](https://docs.angularjs.org/api/ng/directive/ngBindHtml)
-
-```html
-<p ng-bind-html="$ctrl.article.content"></p>
-```
 
 ## ![angular] Angular
 
@@ -2552,12 +1512,4 @@ You need to pass an object containing the `__html` property with the desired tem
 
 ```jsx
 <p dangerouslySetInnerHTML={ { __html: article.content } } />;
-```
-
-## ![vue] Vue.js
-
-The content passed to [`v-html`](https://vuejs.org/v2/guide/syntax.html#Raw-HTML) is not being [sanitized](https://github.com/vuejs/vue/issues/6333). You have to use an external library, e.g. [sanitize-html](https://www.npmjs.com/package/sanitize-html).
-
-```html
-<div v-html="article.content"></div>
 ```
